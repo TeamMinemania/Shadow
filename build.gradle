@@ -1,17 +1,7 @@
 plugins {
-	id 'fabric-loom' version '0.10-SNAPSHOT'
-	id 'maven-publish'
-}
-
-repositories {
-	flatDir {
-		dirs 'lib'
-	}
-	maven {
-		name = "meteor-maven"
-		url = "https://maven.meteordev.org"
-	}
-	mavenCentral()
+    id 'fabric-loom' version '0.10-SNAPSHOT'
+    id 'maven-publish'
+    id 'com.github.johnrengelman.shadow' version '7.0.0'
 }
 
 sourceCompatibility = JavaVersion.VERSION_17
@@ -21,96 +11,115 @@ archivesBaseName = project.archives_base_name
 version = project.mod_version
 group = project.maven_group
 
-minecraft {
-}
-configurations {
-	impl
+repositories {
+    maven {
+        name = "jitpack"
+        url = "https://jitpack.io"
+    }
+    maven {
+        name 'm2-dv8tion'
+        url 'https://m2.dv8tion.net/releases'
+    }
+    maven {
+		name = 'Ladysnake Mods'
+		url = 'https://ladysnake.jfrog.io/artifactory/mods'
+		content {
+			includeGroup 'io.github.ladysnake'
+			includeGroupByRegex 'io\\.github\\.onyxstudios.*'
+		}
+	}
+    mavenCentral()
+    jcenter()
 }
 
-loom {
-	accessWidenerPath = file("src/main/resources/shadow.accessWidener")
+configurations {
+    impl
+    modImpl
 }
 
 dependencies {
+    def dependency = { id ->
+        implementation id
+        shadow id
+    }
+	impl('io.github.spair:imgui-java-binding:1.82.2')
+    impl('io.github.spair:imgui-java-lwjgl3:1.82.2') {
+        exclude group: "org.lwjgl"
+    }
+    ["linux", "linux-x86", "macos", "windows", "windows-x86"].each {
+        impl("io.github.spair:imgui-java-natives-$it:1.82.2")
+    }
 
-    //to change the versions see the gradle.properties file
-	minecraft "com.mojang:minecraft:${project.minecraft_version}"
-	mappings "net.fabricmc:yarn:${project.yarn_mappings}:v2"
-	modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
+    minecraft "com.mojang:minecraft:1.18.2"
+    mappings "net.fabricmc:yarn:1.18.2+build.3:v2"
+    modImplementation "net.fabricmc:fabric-loader:0.14.6"
 
-	Set<String> apiModules = [
-			"fabric-api-base",
-			"fabric-item-groups-v0",
-			"fabric-resource-loader-v0"
-	]
+    //Fabric api
+    modImplementation "net.fabricmc.fabric-api:fabric-api:0.53.0+1.18.2"
+    dependency "io.socket:socket.io-client:2.1.0"
+    dependency "club.minnced:java-discord-rpc:2.0.2"
 
-// Add each module as a dependency
-	apiModules.forEach {
-		include(modImplementation(fabricApi.module(it, project.fabric_api_version)))
+    modImpl(group: "io.github.ladysnake", name: "satin", version: "1.9.0") {
+		transitive = false
 	}
 
-//	modImplementation ("net.fabricmc.fabric-api:fabric-resource-loader:0.1.0")
-
-	compileOnly 'org.projectlombok:lombok:1.18.24'
-	annotationProcessor 'org.projectlombok:lombok:1.18.24'
-
-	impl("meteordevelopment:discord-ipc:1.1")
-
-	impl 'org.java-websocket:Java-WebSocket:1.5.3'
-
-	configurations.impl.dependencies.each {
-		implementation(it)
+    configurations.modImpl.dependencies.each {
+		modImplementation(it)
 		include(it)
 	}
+
+    configurations.impl.dependencies.each {
+        implementation(group: it.group, name: it.name, version: it.version)
+        include(group: it.group, name: it.name, version: it.version)
+    }
+}
+
+shadowJar {
+    configurations = [project.configurations.shadow]
 }
 
 processResources {
-	inputs.property "version", project.version
+    inputs.property "version", project.version
 
-	filesMatching("fabric.mod.json") {
-		expand "version": project.version
-	}
+    filesMatching("fabric.mod.json") {
+        expand "version": project.version
+    }
 }
 
-// ensure that the encoding is set to UTF-8, no matter what the system default is
-// this fixes some edge cases with special characters not displaying correctly
-// see http://yodaconditions.net/blog/fix-for-java-file-encoding-problems-with-gradle.html
-tasks.withType(JavaCompile) {
-	options.encoding = "UTF-8"
+tasks.withType(JavaCompile).configureEach {
+    // Minecraft 1.18 (1.18-pre2) upwards uses Java 17.
+    it.options.release = 17
 }
 
-// Loom will automatically attach sourcesJar to a RemapSourcesJar task and to the "build" task
-// if it is present.
-// If you remove this task, sources will not be generated.
-task sourcesJar(type: Jar, dependsOn: classes) {
-	classifier = "sources"
-	from sourceSets.main.allSource
+java {
+    // Loom will automatically attach sourcesJar to a RemapSourcesJar task and to the "build" task
+    // if it is present.
+    // If you remove this line, sources will not be generated.
+    withSourcesJar()
+}
+
+remapJar {
+    dependsOn shadowJar
+    input.set(shadowJar.archiveFile)
 }
 
 jar {
-	from "LICENSE"
+    from("LICENSE") {
+        rename { "${it}_${project.archivesBaseName}" }
+    }
 }
 
 // configure the maven publication
 publishing {
-	publications {
-		mavenJava(MavenPublication) {
-			// add all the jars that should be included when publishing to maven
-			artifact(jar) {
-				builtBy remapJar
-			}
-			artifact("${project.buildDir.absolutePath}/libs/${archivesBaseName}-${project.version}.jar"){
-				builtBy remapJar
-			}
-			artifact(sourcesJar) {
-				builtBy remapSourcesJar
-			}
-		}
-	}
-
-	// select the repositories you want to publish to
-	repositories {
-		// uncomment to publish to the local maven
-		// mavenLocal()
-	}
+    publications {
+        mavenJava(MavenPublication) {
+            // add all the jars that should be included when publishing to maven
+            artifact(remapJar) {
+                builtBy remapJar
+            }
+            artifact(sourcesJar) {
+                builtBy remapSourcesJar
+            }
+        }
+    }
 }

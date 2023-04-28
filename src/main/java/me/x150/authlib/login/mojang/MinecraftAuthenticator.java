@@ -19,6 +19,7 @@ import me.x150.authlib.login.microsoft.MicrosoftAuthenticator;
 import me.x150.authlib.login.microsoft.XboxToken;
 import me.x150.authlib.login.mojang.profile.MinecraftProfile;
 import me.x150.authlib.struct.Authenticator;
+import net.shadow.utils.CreativeUtils;
 public class MinecraftAuthenticator extends Authenticator<MinecraftToken> {
     protected final MicrosoftAuthenticator microsoftAuthenticator = new MicrosoftAuthenticator();
 
@@ -111,7 +112,9 @@ public class MinecraftAuthenticator extends Authenticator<MinecraftToken> {
             }
 
             JsonObject jsonObject = this.microsoftAuthenticator.parseResponseData(httpURLConnection);
-            return new MinecraftToken(jsonObject.get("access_token").getAsString(), jsonObject.get("username").getAsString(),UUID.fromString(jsonObject.get("selected_profile").getAsJsonObject().get("id").getAsString()));
+            String accesstoken = jsonObject.get("access_token").getAsString();
+            MinecraftProfile mp = getGameProfile(accesstoken);
+            return new MinecraftToken(accesstoken, mp.getUsername(),mp.getUuid());
         } catch (IOException var14) {
             throw new AuthFailureException(String.format("Authentication error. Request could not be made! Cause: '%s'", var14.getMessage()));
         }
@@ -121,17 +124,13 @@ public class MinecraftAuthenticator extends Authenticator<MinecraftToken> {
         return alteningAuth.login();
     }
 
-    public MinecraftProfile getGameProfile(MinecraftToken minecraftToken) {
+    public MinecraftProfile getGameProfile(String accesstoken) {
         try {
-            if(isForceMigrated(minecraftToken)) {
-                // this request is completly useless....
-               return new MinecraftProfile(minecraftToken.getUuid(),minecraftToken.getUsername());
-            }
             URL url = new URL("https://api.minecraftservices.com/minecraft/profile");
             URLConnection urlConnection = url.openConnection();
             HttpURLConnection httpURLConnection = (HttpURLConnection)urlConnection;
             httpURLConnection.setRequestMethod("GET");
-            httpURLConnection.setRequestProperty("Authorization",  "Bearer "+minecraftToken.getAccessToken());
+            httpURLConnection.setRequestProperty("Authorization",  "Bearer "+accesstoken);
             httpURLConnection.connect();
             JsonObject jsonObject = this.parseResponseData(httpURLConnection);
 

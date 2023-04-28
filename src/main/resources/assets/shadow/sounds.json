@@ -1,0 +1,22 @@
+{
+  "moan": {
+    "sounds": [
+      "shadow:moan"
+    ]
+  },
+  "blaster": {
+    "sounds": [
+      "shadow:blaster"
+    ]
+  },
+  "on": {
+    "sounds": [
+      "shadow:on"
+    ]
+  },
+  "off": {
+    "sounds": [
+      "shadow:off"
+    ]
+  }
+}

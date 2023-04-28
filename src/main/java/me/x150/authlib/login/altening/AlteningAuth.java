@@ -9,8 +9,8 @@ import com.mojang.authlib.yggdrasil.YggdrasilUserAuthentication;
 import me.x150.authlib.AccountUtils;
 import me.x150.authlib.login.mojang.MinecraftToken;
 import net.minecraft.client.util.Session;
-import net.shadow.client.ShadowMain;
-import net.shadow.client.mixin.IMinecraftClientAccessor;
+import net.shadow.Shadow;
+import net.shadow.mixin.MinecraftClientAccessor;
 
 import java.util.Optional;
 
@@ -23,7 +23,7 @@ public class AlteningAuth {
     String uuid;
     String token;
     private YggdrasilUserAuthentication getAuth() {
-        YggdrasilUserAuthentication yggdrasilUserAuthentication = (YggdrasilUserAuthentication)new YggdrasilAuthenticationService(((IMinecraftClientAccessor) ShadowMain.client).getProxy(), "", Environment.create((String)"http://authserver.thealtening.com", (String)"https://api.mojang.com", (String)"http://sessionserver.thealtening.com", (String)"https://api.minecraftservices.com", (String)"The Altening")).createUserAuthentication(Agent.MINECRAFT);
+        YggdrasilUserAuthentication yggdrasilUserAuthentication = (YggdrasilUserAuthentication)new YggdrasilAuthenticationService(((MinecraftClientAccessor) Shadow.c).getProxy(), "", Environment.create((String)"http://authserver.thealtening.com", (String)"https://api.mojang.com", (String)"http://sessionserver.thealtening.com", (String)"https://api.minecraftservices.com", (String)"The Altening")).createUserAuthentication(Agent.MINECRAFT);
         yggdrasilUserAuthentication.setUsername(token);
         yggdrasilUserAuthentication.setPassword("(REAL)");
         return yggdrasilUserAuthentication;
@@ -45,14 +45,14 @@ public class AlteningAuth {
     }
     public MinecraftToken login() {
         fetchInfo();
-        YggdrasilMinecraftSessionService yggdrasilMinecraftSessionService = (YggdrasilMinecraftSessionService) ShadowMain.client.getSessionService();
+        YggdrasilMinecraftSessionService yggdrasilMinecraftSessionService = (YggdrasilMinecraftSessionService) Shadow.c.getSessionService();
         AccountUtils.setBaseUrl(yggdrasilMinecraftSessionService, SESSION + "/session/minecraft/");
         AccountUtils.setJoinUrl(yggdrasilMinecraftSessionService, SESSION + "/session/minecraft/join");
         AccountUtils.setCheckUrl(yggdrasilMinecraftSessionService, SESSION + "/session/minecraft/hasJoined");
         YggdrasilUserAuthentication yggdrasilUserAuthentication = this.getAuth();
         try {
             yggdrasilUserAuthentication.logIn();
-            ((IMinecraftClientAccessor) ShadowMain.client).setSession(new Session(yggdrasilUserAuthentication.getSelectedProfile().getName(), yggdrasilUserAuthentication.getSelectedProfile().getId().toString(), yggdrasilUserAuthentication.getAuthenticatedToken(), Optional.empty(), Optional.empty(), Session.AccountType.MOJANG));
+            ((MinecraftClientAccessor) Shadow.c).setSession(new Session(yggdrasilUserAuthentication.getSelectedProfile().getName(), yggdrasilUserAuthentication.getSelectedProfile().getId().toString(), yggdrasilUserAuthentication.getAuthenticatedToken(), Optional.empty(), Optional.empty(), Session.AccountType.MOJANG));
             this.username = yggdrasilUserAuthentication.getSelectedProfile().getName();
             return new MinecraftToken(yggdrasilUserAuthentication.getAuthenticatedToken(),username,yggdrasilUserAuthentication.getSelectedProfile().getId());
         }
