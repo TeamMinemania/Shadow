@@ -11,7 +11,6 @@ public class CommandRegistry {
 
     public static void init() {
         reg.add(new gwatCmd());
-        reg.add(new GlueAuraCmd());
         reg.add(new LwatCmd());
         reg.add(new AddItemCmd());
         reg.add(new ApvelCmd());
