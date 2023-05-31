@@ -50,7 +50,6 @@ public class ModuleRegistry {
         mods.add(new BotMovement());
         mods.add(new AdBlockModule());
         mods.add(new AirJumpModule());
-        mods.add(new GlueAuraModule());
         mods.add(new AirPlaceModule());
         mods.add(new AnimationCrashModule());
         mods.add(new AnnihilatorModule());
