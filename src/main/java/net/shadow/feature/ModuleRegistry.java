@@ -179,7 +179,6 @@ public class ModuleRegistry {
         mods.add(new QuakeSpeed());
         //mods.add(new RCEModule());
         mods.add(new RandomInteractModule());
-        mods.add(new ReachPlusModule());
         mods.add(new ArmorStandCrash());
         mods.add(new ReachModule());
         mods.add(new Retard());
