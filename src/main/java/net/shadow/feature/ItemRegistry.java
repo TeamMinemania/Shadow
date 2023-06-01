@@ -24,9 +24,6 @@ import static net.shadow.Shadow.loadString;
 
 public class ItemRegistry {
 
-    static List<ItemStack> grief = loadGriefItems();
-    static List<ItemStack> exploit = loadExploitItems();
-
     public static void register() {
         // Command Items
 
@@ -46,4 +43,5 @@ public class ItemRegistry {
                     stacks.add(new ItemStack(Blocks.SPAWNER, 1));
                 })
                 .build();
+        }
 }
