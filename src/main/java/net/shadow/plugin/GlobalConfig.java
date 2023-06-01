@@ -14,7 +14,7 @@ public class GlobalConfig {
     public static ServerInfo sinfo = null;
     private static String prefix = ">";
     public static String search1 = "A Minecraft Server";
-    public static String search2 = "1.18.1";
+    public static String search2 = "1.19.2";
 
     public static String getPrefix() {
         return prefix;
