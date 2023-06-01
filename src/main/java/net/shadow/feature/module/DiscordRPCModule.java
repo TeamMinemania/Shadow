@@ -11,7 +11,7 @@ import net.shadow.feature.configuration.CustomValue;
 public class DiscordRPCModule extends Module {
     private static final DiscordRichPresence rc = new DiscordRichPresence();
     private static final DiscordRPC is = DiscordRPC.INSTANCE;
-    final CustomValue<String> details = this.config.create("Details", "For Minecraft 1.18.2");
+    final CustomValue<String> details = this.config.create("Details", "For Minecraft 1.19.2");
     private int t;
 
     public DiscordRPCModule() {
