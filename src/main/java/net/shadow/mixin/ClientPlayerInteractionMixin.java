@@ -20,17 +20,11 @@ public abstract class ClientPlayerInteractionMixin implements IClientPlayerInter
         if (ModuleRegistry.find("Reach").getSpecial().equalsIgnoreCase("true")) {
             cir.setReturnValue(10F);
         }
-        if (ModuleRegistry.find("ReachPlus").isEnabled()) {
-            cir.setReturnValue(20F);
-        }
     }
 
     @Inject(method = {"hasExtendedReach()Z"}, at = {@At("HEAD")}, cancellable = true)
     private void onExtendedReach(CallbackInfoReturnable<Boolean> cir) {
         if (ModuleRegistry.find("Reach").getSpecial().equalsIgnoreCase("true")) {
-            cir.setReturnValue(true);
-        }
-        if (ModuleRegistry.find("ReachPlus").isEnabled()) {
             cir.setReturnValue(true);
         }
     }
