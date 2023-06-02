@@ -10,6 +10,7 @@ import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
 import net.minecraft.text.Text;
 import net.minecraft.util.collection.DefaultedList;
+import net.minecraft.nbt.StringNbtReader;
 
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
