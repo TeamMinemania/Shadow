@@ -60,8 +60,9 @@ public class ItemRegistry {
         }
     
 // Read the entries from the text file
-try (InputStream is = ItemRegistry.class.getClassLoader().getResourceAsStream("itemRegistry.txt");
-     BufferedReader reader = new BufferedReader(new InputStreamReader(is))) {
+try {
+    InputStream is = ItemRegistry.class.getClassLoader().getResourceAsStream("itemRegistry.txt");
+    BufferedReader reader = new BufferedReader(new InputStreamReader(is));
     String line;
     while ((line = reader.readLine()) != null) {
         // Parse the item data
