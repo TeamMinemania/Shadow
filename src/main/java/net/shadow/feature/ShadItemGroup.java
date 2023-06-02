@@ -4,7 +4,6 @@
 
 package net.shadow.feature;
 
-import lombok.Getter;
 import net.fabricmc.fabric.impl.item.group.ItemGroupExtensions;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroup;
@@ -17,11 +16,11 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 public class ShadItemGroup {
     final Text name;
-    @Getter
+
     String nameS;
-    @Getter
+
     ItemStack icon;
-    @Getter
+
     List<ItemStack> items = new CopyOnWriteArrayList<>();
 
     public static ItemStack generateItemStackWithMeta(String nbt, Item item) {
