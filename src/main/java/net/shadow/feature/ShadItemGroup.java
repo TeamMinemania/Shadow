@@ -12,8 +12,6 @@ import net.minecraft.text.Text;
 import net.minecraft.util.collection.DefaultedList;
 import net.minecraft.nbt.StringNbtReader;
 
-import net.shadow.feature.items.ItemRegistry;
-
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
