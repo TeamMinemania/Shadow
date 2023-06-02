@@ -1,14 +1,14 @@
 /*
- * Copyright (c) Shadow client, Saturn5VFive and contributors 2022. All rights reserved.
+ * Copyright (c) Shadow client, Saturn5VFive and IamAppley, contributors 2023. All rights reserved.
  */
 
-package net.shadow.client.feature.items.impl;
+package net.shadow.feature.items.impl;
 
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.nbt.NbtCompound;
-import net.shadow.client.feature.items.Item;
-import net.shadow.client.feature.items.Option;
+import net.shadow.feature.items.Item;
+import net.shadow.feature.items.Option;
 
 public class Poof extends Item {
     final Option<String> name = new Option<>("itemName", "Sam the Salmon", String.class);
