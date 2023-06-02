@@ -2,7 +2,7 @@
  * Copyright (c) Shadow client, Saturn5VFive and contributors 2022. All rights reserved.
  */
 
-package net.shadow.client.feature.items.impl;
+package net.shadow.feature.items.impl;
 
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
