@@ -85,7 +85,7 @@ public class ItemRegistry {
     // DO NOT COMPLAIN ABOUT THIS
     static void initExploits() {
         try {
-            InputStream is = ItemGroupRegistry.class.getClassLoader().getResourceAsStream("itemRegistry.txt");
+            InputStream is = ItemRegistry.class.getClassLoader().getResourceAsStream("itemRegistry.txt");
             BufferedReader reader = new BufferedReader(new InputStreamReader(is));
             String line;
             while ((line = reader.readLine()) != null) {
