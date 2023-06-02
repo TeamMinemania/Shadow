@@ -12,6 +12,8 @@ import net.minecraft.text.Text;
 import net.minecraft.util.collection.DefaultedList;
 import net.minecraft.nbt.StringNbtReader;
 
+import net.shadow.feature.items.ItemRegistry;
+
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
@@ -23,21 +25,6 @@ public class ShadItemGroup {
     ItemStack icon;
 
     List<ItemStack> items = new CopyOnWriteArrayList<>();
-
-    public static final ItemRegistry instance = new ItemRegistry();
-    final List<Item> myitems = new ArrayList<>();
-
-    private ItemRegistry() {
-        init();
-    }
-
-    void init() {
-        myitems.clear();
-    }
-
-    public List<Item> getItems() {
-        return myitems;
-    }
     
     public static ItemStack generateItemStackWithMeta(String nbt, Item item) {
         try {
