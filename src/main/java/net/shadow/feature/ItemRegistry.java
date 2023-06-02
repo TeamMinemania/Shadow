@@ -59,49 +59,85 @@ public class ItemRegistry {
                 .build();
         }
     
-         public static final List<ShadItemGroupEntry> groups = Util.make(() -> {
-        List<ShadItemGroupEntry> entries = new ArrayList<>();
-        entries.add(new ShadItemGroupEntry(new ShadItemGroup("Exploits", new ItemStack(Items.ARMOR_STAND)), "exploit"));
-        entries.add(new ShadItemGroupEntry(new ShadItemGroup("Grief", new ItemStack(Items.TNT)), "grief"));
-        entries.add(new ShadItemGroupEntry(new ShadItemGroup("Special", new ItemStack(Items.STRUCTURE_VOID)), "special"));
-        return entries;
-    });
+// Read the entries from the text file
+try (InputStream is = ItemRegistry.class.getClassLoader().getResourceAsStream("itemRegistry.txt");
+     BufferedReader reader = new BufferedReader(new InputStreamReader(is))) {
+    String line;
+    while ((line = reader.readLine()) != null) {
+        // Parse the item data
+        String[] parts = line.split(";");
+        String itemId = parts[1];
+        String nbtBase64 = parts[2];
+        CompoundTag nbt = (CompoundTag) NbtIo.readCompressed(new ByteArrayInputStream(Base64.getDecoder().decode(nbtBase64)));
 
-    public static void addItem(String id, ItemStack stack) {
-        ShadItemGroupEntry se = groups.stream().filter(shadItemGroupEntry -> shadItemGroupEntry.id.equals(id)).findFirst().orElseThrow();
-        se.group.addItem(stack);
-    }
-
-    public static void addItem(String id, Item item, String nbt) {
-        ShadItemGroupEntry se = groups.stream().filter(shadItemGroupEntry -> shadItemGroupEntry.id.equals(id)).findFirst().orElseThrow();
-        se.group.addItem(item, nbt);
-    }
-
-    public static void init() {
-        initExploits();
-    }
-
-    // CONVERTED WITH A CODEGEN
-    // DO NOT COMPLAIN ABOUT THIS
-    static void initExploits() {
-        try {
-            InputStream is = ItemRegistry.class.getClassLoader().getResourceAsStream("itemRegistry.txt");
-            BufferedReader reader = new BufferedReader(new InputStreamReader(is));
-            String line;
-            while ((line = reader.readLine()) != null) {
-                String[] split = line.split(";");
-                String gid = split[0];
-                String iid = split[1];
-                Item i = Registry.ITEM.get(new Identifier(iid));
-                String nbt = new String(Base64.getDecoder().decode(split[2]));
-                addItem(gid, i, nbt);
-            }
-            is.close();
-        } catch (Exception e) {
-            e.printStackTrace();
+        // Create an instance of the item
+        Item item = Registry.ITEM.get(new Identifier(itemId));
+        if (item == null) {
+            throw new RuntimeException("Unknown item ID: " + itemId);
         }
-    }
+        ItemStack stack = new ItemStack(item);
+        stack.setTag(nbt);
 
-    record ShadItemGroupEntry(ShadItemGroup group, String id) {
+        // Add the item to the appropriate item group
+        DefaultedList<ItemStack> stacks = new DefaultedList<>(ItemStack.EMPTY);
+        stacks.add(stack);
+        ItemGroup itemGroup;
+        if (parts[0].equals("special")) {
+            itemGroup = new ItemGroup(ItemGroup.GROUPS.length, "shadow.special") {
+                @Override
+                public ItemStack createIcon() {
+                    return new ItemStack(Items.STRUCTURE_VOID);
+                }
+
+                @Override
+                public void appendStacks(DefaultedList<ItemStack> stacks) {
+                    stacks.addAll(stacks);
+                }
+
+                @Override
+                public Text getDisplayName() {
+                    return Text.of("Special");
+                }
+            };
+        } else if (parts[0].equals("grief")) {
+            itemGroup = new ItemGroup(ItemGroup.GROUPS.length, "shadow.grief") {
+                @Override
+                public ItemStack createIcon() {
+                    return new ItemStack(Items.TNT);
+                }
+
+                @Override
+                public void appendStacks(DefaultedList<ItemStack> stacks) {
+                    stacks.addAll(stacks);
+                }
+
+                @Override
+                public Text getDisplayName() {
+                    return Text.of("Grief");
+                }
+            };
+        } else {
+            itemGroup = new ItemGroup(ItemGroup.GROUPS.length, "shadow.exploit") {
+                @Override
+                public ItemStack createIcon() {
+                    return new ItemStack(Items.ARMOR_STAND);
+                }
+
+                @Override
+                public void appendStacks(DefaultedList<ItemStack> stacks) {
+                    stacks.addAll(stacks);
+                }
+
+                @Override
+                public Text getDisplayName() {
+                    return Text.of("Exploits");
+                }
+            };
+        }
+        itemGroup.appendStacks(stacks);
     }
+} catch (IOException e) {
+    e.printStackTrace();
 }
+}
+
