@@ -1,5 +1,5 @@
 /*
- * Copyright (c) Shadow client, Saturn5VFive and contributors 2022. All rights reserved.
+ * Copyright (c) Shadow client, Saturn5VFive, Wendellmeset and contributors 2023. All rights reserved.
  */
 
 package net.shadow.feature;
@@ -11,7 +11,6 @@ import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
 import net.minecraft.text.Text;
 import net.minecraft.util.collection.DefaultedList;
-import net.shadow.feature.util.Utils;
 
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -25,6 +24,16 @@ public class ShadItemGroup {
     @Getter
     List<ItemStack> items = new CopyOnWriteArrayList<>();
 
+    public static ItemStack generateItemStackWithMeta(String nbt, Item item) {
+        try {
+            ItemStack stack = new ItemStack(item);
+            stack.setNbt(StringNbtReader.parse(nbt));
+            return stack;
+        } catch (Exception ignored) {
+            return new ItemStack(item);
+        }
+    }
+    
     public ShadItemGroup(String name, ItemStack icon) {
         this.nameS = name;
         this.name = Text.of(name);
@@ -53,6 +62,6 @@ public class ShadItemGroup {
     }
 
     public void addItem(Item type, String nbt) {
-        addItem(Utils.generateItemStackWithMeta(nbt, type));
+        addItem(generateItemStackWithMeta(nbt, type));
     }
 }
