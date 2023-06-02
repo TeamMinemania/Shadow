@@ -60,7 +60,6 @@ public class ItemRegistry {
         }
     
 // Read the entries from the text file
-try {
     InputStream is = ItemRegistry.class.getClassLoader().getResourceAsStream("itemRegistry.txt");
     BufferedReader reader = new BufferedReader(new InputStreamReader(is));
     String line;
@@ -137,8 +136,5 @@ try {
         }
         itemGroup.appendStacks(stacks);
     }
-} catch (IOException e) {
-    e.printStackTrace();
-}
 }
 
