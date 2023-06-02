@@ -6,8 +6,8 @@ package net.shadow.client.feature.items.impl;
 
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
-import net.shadow.client.feature.items.Item;
-import net.shadow.client.feature.items.Option;
+import net.shadow.feature.items.Item;
+import net.shadow.feature.items.Option;
 import net.shadow.client.helper.nbt.NbtGroup;
 import net.shadow.client.helper.nbt.NbtList;
 import net.shadow.client.helper.nbt.NbtObject;
