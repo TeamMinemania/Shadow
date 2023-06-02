@@ -2,7 +2,7 @@
  * Copyright (c) Shadow client, Saturn5VFive and contributors 2022. All rights reserved.
  */
 
-package net.shadow.client.feature.items;
+package net.shadow.feature.items;
 
 import net.shadow.feature.items.impl.Backdoor;
 import net.shadow.feature.items.impl.Fireball;
