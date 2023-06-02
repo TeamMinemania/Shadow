@@ -2,7 +2,7 @@
  * Copyright (c) Shadow client, Saturn5VFive and contributors 2022. All rights reserved.
  */
 
-package net.shadow.client.feature.itemMenu;
+package net.shadow.feature;
 
 import lombok.Getter;
 import net.fabricmc.fabric.impl.item.group.ItemGroupExtensions;
@@ -11,7 +11,7 @@ import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
 import net.minecraft.text.Text;
 import net.minecraft.util.collection.DefaultedList;
-import net.shadow.client.helper.util.Utils;
+import net.shadow.feature.util.Utils;
 
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
