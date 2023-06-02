@@ -12,7 +12,6 @@ import net.shadow.client.helper.nbt.NbtGroup;
 import net.shadow.client.helper.nbt.NbtList;
 import net.shadow.client.helper.nbt.NbtObject;
 import net.shadow.client.helper.nbt.NbtProperty;
-import net.shadow.client.helper.util.Utils;
 
 public class Fireball extends Item {
     final Option<Integer> strength = new Option<>("strength", null, Integer.class);
@@ -25,7 +24,7 @@ public class Fireball extends Item {
     public ItemStack generate() {
         int strength = this.strength.getValue();
         if (strength < 0 || strength > 127) {
-            Utils.Logging.error("Strength has to be between 0-127");
+            client.player.sendMessage("Strength has to be between 0-127", false);
             return null;
         }
         ItemStack is = new ItemStack(Items.BLAZE_SPAWN_EGG);
