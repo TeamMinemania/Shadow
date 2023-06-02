@@ -34,6 +34,24 @@ import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
 
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
+
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
+
+import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.NbtIo;
+import org.apache.commons.codec.binary.Base64;
+
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+
 import static net.shadow.Shadow.loadString;
 
 public class ItemRegistry {
@@ -59,82 +77,52 @@ public class ItemRegistry {
                 .build();
         }
     
-// Read the entries from the text file
-    InputStream is = ItemRegistry.class.getClassLoader().getResourceAsStream("itemRegistry.txt");
-    BufferedReader reader = new BufferedReader(new InputStreamReader(is));
-    String line;
-    while ((line = reader.readLine()) != null) {
-        // Parse the item data
-        String[] parts = line.split(";");
-        String itemId = parts[1];
-        String nbtBase64 = parts[2];
-        CompoundTag nbt = (CompoundTag) NbtIo.readCompressed(new ByteArrayInputStream(Base64.getDecoder().decode(nbtBase64)));
+            private static final Map<String, Item> itemMap = new HashMap<>();
 
-        // Create an instance of the item
-        Item item = Registry.ITEM.get(new Identifier(itemId));
-        if (item == null) {
-            throw new RuntimeException("Unknown item ID: " + itemId);
+    public static void loadItems(String filePath) {
+        itemMap.put("exploit", Items.ARMOR_STAND);
+        itemMap.put("grief", Items.TNT);
+        itemMap.put("special", Items.STRUCTURE_VOID);
+
+        try (BufferedReader reader = new BufferedReader(new FileReader(filePath))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                String[] parts = line.split(";");
+                if (parts.length == 2) {
+                    String section = parts[0];
+                    String base64Data = parts[1];
+
+                    Item item = itemMap.get(section);
+                    if (item != null) {
+                        // Convert base64Data to NBT and create an ItemStack
+                        ItemStack stack = getItemStackFromBase64(base64Data);
+                        // Add the item to the appropriate section
+                        entries.add(new ItemGroupEntry(section, stack));
+                    }
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
         }
-        ItemStack stack = new ItemStack(item);
-        stack.setTag(nbt);
-
-        // Add the item to the appropriate item group
-        DefaultedList<ItemStack> stacks = new DefaultedList<>(ItemStack.EMPTY);
-        stacks.add(stack);
-        ItemGroup itemGroup;
-        if (parts[0].equals("special")) {
-            itemGroup = new ItemGroup(ItemGroup.GROUPS.length, "shadow.special") {
-                @Override
-                public ItemStack createIcon() {
-                    return new ItemStack(Items.STRUCTURE_VOID);
-                }
-
-                @Override
-                public void appendStacks(DefaultedList<ItemStack> stacks) {
-                    stacks.addAll(stacks);
-                }
-
-                @Override
-                public Text getDisplayName() {
-                    return Text.of("Special");
-                }
-            };
-        } else if (parts[0].equals("grief")) {
-            itemGroup = new ItemGroup(ItemGroup.GROUPS.length, "shadow.grief") {
-                @Override
-                public ItemStack createIcon() {
-                    return new ItemStack(Items.TNT);
-                }
-
-                @Override
-                public void appendStacks(DefaultedList<ItemStack> stacks) {
-                    stacks.addAll(stacks);
-                }
-
-                @Override
-                public Text getDisplayName() {
-                    return Text.of("Grief");
-                }
-            };
-        } else {
-            itemGroup = new ItemGroup(ItemGroup.GROUPS.length, "shadow.exploit") {
-                @Override
-                public ItemStack createIcon() {
-                    return new ItemStack(Items.ARMOR_STAND);
-                }
-
-                @Override
-                public void appendStacks(DefaultedList<ItemStack> stacks) {
-                    stacks.addAll(stacks);
-                }
-
-                @Override
-                public Text getDisplayName() {
-                    return Text.of("Exploits");
-                }
-            };
-        }
-        itemGroup.appendStacks(stacks);
     }
+
+private static ItemStack getItemStackFromBase64(String base64Data) {
+    try {
+        // Decode the base64 string to bytes
+        byte[] decodedBytes = Base64.decodeBase64(base64Data);
+        
+        // Read the bytes as an NBT CompoundTag
+        CompoundTag nbtTag = NbtIo.readCompressed(new ByteArrayInputStream(decodedBytes));
+        
+        // Create an ItemStack from the NBT data
+        ItemStack stack = ItemStack.fromTag(nbtTag);
+        
+        return stack;
+    } catch (IOException e) {
+        e.printStackTrace();
+    }
+    
+    return ItemStack.EMPTY;  // Return an empty ItemStack if an error occurs
+}
 }
 
