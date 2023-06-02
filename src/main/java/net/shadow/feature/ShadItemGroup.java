@@ -24,6 +24,21 @@ public class ShadItemGroup {
 
     List<ItemStack> items = new CopyOnWriteArrayList<>();
 
+    public static final ItemRegistry instance = new ItemRegistry();
+    final List<Item> myitems = new ArrayList<>();
+
+    private ItemRegistry() {
+        init();
+    }
+
+    void init() {
+        myitems.clear();
+    }
+
+    public List<Item> getItems() {
+        return myitems;
+    }
+    
     public static ItemStack generateItemStackWithMeta(String nbt, Item item) {
         try {
             ItemStack stack = new ItemStack(item);
