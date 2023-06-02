@@ -2,9 +2,8 @@
  * Copyright (c) Shadow client, Saturn5VFive and contributors 2022. All rights reserved.
  */
 
-package net.shadow.client.feature.items;
+package net.shadow.feature.items;
 
-import lombok.Getter;
 import net.minecraft.item.ItemStack;
 
 import java.lang.reflect.Field;
@@ -13,7 +12,6 @@ import java.util.List;
 
 public abstract class Item {
 
-    @Getter
     final String name, desc;
 
     public Item(String name, String desc) {
